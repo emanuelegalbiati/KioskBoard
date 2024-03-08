@@ -68,7 +68,9 @@
     keysIconSize: '25px',
     keysEnterText: 'Enter',
     keysEnterCallback: undefined,
+    openCloseCallback: undefined,
     keysEnterCanClose: true,
+    showBottomBar: true,
   };
   var kioskBoardCachedKeys;
   var kioskBoardNewOptions;
@@ -359,6 +361,7 @@
 
         // each input focus listener: begin
         var inputFocusListener = function (e) {
+          e.stopPropagation();
           // input element variables: begin
           var theInput = e.currentTarget;
           var theInputSelIndex = 0;
@@ -432,7 +435,18 @@
               if (Object.prototype.hasOwnProperty.call(kioskBoardSpecialCharacters, key2)) {
                 var index2 = key2;
                 var value2 = kioskBoardSpecialCharacters[key2];
-                var eachKey2 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key" data-index="' + index2.toString() + '" data-value="' + value2.toString() + '">' + value2.toString() + '</span>';
+                var eachKey2;
+                if (value2 == 'backspace') {
+                  eachKey2 = backspaceKey;
+                } else if (value2 == 'enter') {
+                  eachKey2 = enterKey;
+                } else if (value2 == 'capslock') {
+                  eachKey2 = capsLockKey;
+                } else if (value2 == 'space') {
+                  eachKey2 = spaceKey;
+                } else {
+                  eachKey2 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key" data-index="' + index2.toString() + '" data-value="' + value2.toString() + '">' + value2.toString() + '</span>';
+                }
                 specialCharactersContent += eachKey2;
               }
             }
@@ -473,7 +487,18 @@
                 if (Object.prototype.hasOwnProperty.call(kioskBoardAllKeysNumbersObject, key4)) {
                   var index4 = key4;
                   var value4 = kioskBoardAllKeysNumbersObject[key4];
-                  var eachKey4 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value4.toString() + '" data-index="' + index4.toString() + '" data-value="' + value4.toString() + '">' + value4.toString() + '</span>';
+                  var eachKey4;
+                  if (value4 == 'backspace') {
+                    eachKey4 = backspaceKey;
+                  } else if (value4 == 'enter') {
+                    eachKey4 = enterKey;
+                  } else if (value4 == 'capslock') {
+                    eachKey4 = capsLockKey;
+                  } else if (value4 == 'space') {
+                    eachKey4 = spaceKey;
+                  } else {
+                    eachKey4 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value4.toString() + '" data-index="' + index4.toString() + '" data-value="' + value4.toString() + '">' + value4.toString() + '</span>';
+                  }
                   numberKeysContent += eachKey4;
                 }
               }
@@ -489,7 +514,18 @@
                 if (Object.prototype.hasOwnProperty.call(eachObj, key5)) {
                   var index5 = key5;
                   var value5 = eachObj[key5];
-                  var eachKey5 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value5.toString().toLocaleLowerCase(keyboardLanguage) + '" data-index="' + index5.toString() + '" data-value="' + value5.toString() + '">' + value5.toString() + '</span>';
+                  var eachKey5;
+                  if (value5 == 'backspace') {
+                    eachKey5 = backspaceKey;
+                  } else if (value5 == 'enter') {
+                    eachKey5 = enterKey;
+                  } else if (value5 == 'capslock') {
+                    eachKey5 = capsLockKey;
+                  } else if (value5 == 'space') {
+                    eachKey5 = spaceKey;
+                  } else {
+                    eachKey5 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value5.toString().toLocaleLowerCase(keyboardLanguage) + '" data-index="' + index5.toString() + '" data-value="' + value5.toString() + '">' + value5.toString() + '</span>';
+                  }
                   rowKeysContent += eachKey5;
                 }
               }
@@ -498,7 +534,9 @@
             // dynamic keys group: end
 
             // bottom keys group: begin
-            keysRowElements += '<div class="kioskboard-row kioskboard-row-bottom ' + (allowedSpecialCharacters ? 'kioskboard-with-specialcharacter' : '') + '">' + capsLockKey + specialCharacterKey + spaceKey + enterKey + backspaceKey + '</div>';
+            if (opt.showBottomBar) {
+              keysRowElements += '<div class="kioskboard-row kioskboard-row-bottom ' + (allowedSpecialCharacters ? 'kioskboard-with-specialcharacter' : '') + '">' + capsLockKey + specialCharacterKey + spaceKey + enterKey + backspaceKey + '</div>';
+            }
             // bottom keys group: end
 
             // add if special character keys allowed: begin
@@ -564,6 +602,9 @@
                 if (keyboardElm.parentNode !== null) {
                   keyboardElm.parentNode.removeChild(keyboardElm); // remove keyboard
                   window.document.body.classList.remove('kioskboard-body-padding'); // remove body padding class
+                  if (typeof opt.openCloseCallback === 'function') {
+                    opt.openCloseCallback('close');
+                  }
                 }
                 clearTimeout(removeTimeout);
               }, cssAnimationsDuration);
@@ -792,13 +833,13 @@
             var isPaddingTop = (theInputOffsetTop < keyboardHeight) && isPlacementTop;
             var isPaddingBottom = documentHeight <= (theInputOffsetTop + keyboardHeight) && !isPlacementTop;
 
-            if (isPaddingTop || isPaddingBottom) {
+            if (isPaddingTop || isPaddingBottom || !0) {
               var styleElm = window.document.getElementById('KioskboardBodyPadding');
               if (styleElm && styleElm.parentNode !== null) {
                 styleElm.parentNode.removeChild(styleElm);
               }
 
-              var style = '<style id="KioskboardBodyPadding">.kioskboard-body-padding {padding-' + (isPaddingTop ? 'top' : 'bottom') + ':' + keyboardHeight + 'px !important;}</style>';
+              var style = '<style id="KioskboardBodyPadding">.kioskboard-body-padding {margin-' + (isPaddingTop ? 'top' : 'bottom') + ':' + keyboardHeight + 'px !important;}</style>';
               var styleRange = window.document.createRange();
               styleRange.selectNode(window.document.head);
               var styleFragment = styleRange.createContextualFragment(style);
@@ -870,9 +911,15 @@
                 clearTimeout(docClickTimeout);
               }, cssAnimationsDuration);
             };
-            window.document.addEventListener('click', docClickListener); // add document click listener
+            setTimeout( function() {
+              window.document.addEventListener('click', docClickListener); // add document click listener
+            },500);
             // keyboard click outside listener: end
-          }
+
+            if (typeof opt.openCloseCallback === 'function') {
+              opt.openCloseCallback('open');
+            }
+          }          
           // append keyboard: end
         };
         input.addEventListener('focus', inputFocusListener); // add input focus listener

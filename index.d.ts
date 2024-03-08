@@ -162,10 +162,22 @@ declare namespace KioskBoard {
     keysEnterCallback?: () => void;
 
     /**
+     * @property {function} - Optional, The callback function of the open or close of keyboard.
+     * @defaultValue `undefined`
+     */
+    openCloseCallback?: (action: 'open'|'close') => void;
+
+    /**
      * @property {boolean} - Optional, The Enter key can close and remove the keyboard. Prevented when `false`
      * @defaultValue `true`
      */
     keysEnterCanClose?: boolean;
+
+    /**
+     * @property {boolean} - Optional, show the bar on the bottom. Prevented when `false`.
+     * @defaultValue `true`
+     */
+    showBottomBar?: boolean;
   }
 
   /**
