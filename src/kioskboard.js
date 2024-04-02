@@ -700,6 +700,8 @@
                       input.setSelectionRange(theInputSelIndex + 1, theInputSelIndex + 1);
                     }
 
+                    input.scrollLeft = input.scrollWidth;
+
                     // input trigger change event for update the value
                     input.dispatchEvent(changeEvent);
                   }
