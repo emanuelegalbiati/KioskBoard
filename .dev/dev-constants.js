@@ -36,6 +36,7 @@ const minifyOptions = {
 
 const minifyOverrides = {
   comments: false, // remove all comments
+  //minified: false,
 };
 // - Babel Minify Options: end
 

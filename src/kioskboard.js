@@ -1,6 +1,6 @@
 /*!
 * KioskBoard - Virtual Keyboard ('https://github.com/furcan/KioskBoard')
-* Version: 2.3.0
+* Version: 2.3.1
 * Author: Furkan ('https://github.com/furcan')
 * Copyright 2022 KioskBoard - Virtual Keyboard, MIT Licence ('https://opensource.org/licenses/MIT')*
 */
@@ -592,6 +592,7 @@
           // remove the keyboard: begin
           var removeKeyboard = function () {
             // add remove class
+            window.document.removeEventListener('click', docClickListener);
             var keyboardElm = window.document.getElementById(kioskBoardVirtualKeyboardId);
             if (keyboardElm) {
               keyboardElm.classList.add(cssAnimationsStyle + '-remove');
@@ -690,7 +691,11 @@
                     theInputSelIndex = input.selectionStart || (input.value || '').length;
 
                     // add value by index
-                    theInputValArray.splice(theInputSelIndex, 0, keyValArr[keyValIndex]);
+                    if (theInputValArray.length == 1 && theInputValArray[0] == '0') {
+                      theInputValArray[0] = keyValArr[keyValIndex];
+                    } else {
+                      theInputValArray.splice(theInputSelIndex, 0, keyValArr[keyValIndex]);
+                    }
 
                     // update input value
                     input.value = theInputValArray.join('');
@@ -894,7 +899,6 @@
                   && !e.target.classList.contains('kioskboard-body-padding')
                 ) {
                   removeKeyboard();
-                  window.document.removeEventListener('click', docClickListener);
                 }
                 // check event target to remove keyboard: end
 
